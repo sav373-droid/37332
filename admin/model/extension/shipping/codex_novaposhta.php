@@ -1,17 +1,7 @@
 <?php
 class ModelExtensionShippingCodexNovaposhta extends Model {
     public function install() {
-        $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "codex_novaposhta_action` (
-            `codex_novaposhta_action_id` INT(11) NOT NULL AUTO_INCREMENT,
-            `date_added` DATETIME NOT NULL,
-            `direction` VARCHAR(32) NOT NULL,
-            `model` VARCHAR(64) NOT NULL,
-            `method` VARCHAR(64) NOT NULL,
-            `request_json` MEDIUMTEXT NOT NULL,
-            `response_json` MEDIUMTEXT NOT NULL,
-            `is_error` TINYINT(1) NOT NULL DEFAULT 0,
-            PRIMARY KEY (`codex_novaposhta_action_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
+        $this->ensureLogTable();
     }
 
     public function uninstall() {
@@ -73,6 +63,8 @@ class ModelExtensionShippingCodexNovaposhta extends Model {
     }
 
     public function addActionLog($direction, $model_name, $method_name, $request, $response, $is_error = 0) {
+        $this->ensureLogTable();
+
         $this->db->query("INSERT INTO `" . DB_PREFIX . "codex_novaposhta_action` SET
             date_added = NOW(),
             direction = '" . $this->db->escape($direction) . "',
@@ -84,7 +76,36 @@ class ModelExtensionShippingCodexNovaposhta extends Model {
     }
 
     public function getActionLogs($limit = 100) {
+        if (!$this->tableExists(DB_PREFIX . 'codex_novaposhta_action')) {
+            return array();
+        }
+
         $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "codex_novaposhta_action` ORDER BY codex_novaposhta_action_id DESC LIMIT " . (int)$limit);
+
         return $query->rows;
+    }
+
+    private function ensureLogTable() {
+        if ($this->tableExists(DB_PREFIX . 'codex_novaposhta_action')) {
+            return;
+        }
+
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "codex_novaposhta_action` (
+            `codex_novaposhta_action_id` INT(11) NOT NULL AUTO_INCREMENT,
+            `date_added` DATETIME NOT NULL,
+            `direction` VARCHAR(32) NOT NULL,
+            `model` VARCHAR(64) NOT NULL,
+            `method` VARCHAR(64) NOT NULL,
+            `request_json` MEDIUMTEXT NOT NULL,
+            `response_json` MEDIUMTEXT NOT NULL,
+            `is_error` TINYINT(1) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`codex_novaposhta_action_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
+    }
+
+    private function tableExists($table_name) {
+        $query = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape($table_name) . "'");
+
+        return $query->num_rows > 0;
     }
 }
