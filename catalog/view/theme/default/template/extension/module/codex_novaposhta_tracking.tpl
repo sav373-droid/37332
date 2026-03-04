@@ -7,6 +7,10 @@
         <label for="input-ttn"><?php echo $entry_ttn; ?></label>
         <input type="text" id="input-ttn" name="ttn" value="<?php echo $ttn; ?>" class="form-control" />
       </div>
+      <div class="form-group">
+        <label for="input-phone"><?php echo $entry_phone; ?></label>
+        <input type="text" id="input-phone" name="phone" value="<?php echo $phone; ?>" class="form-control" />
+      </div>
       <button type="submit" class="btn btn-primary"><?php echo $button_track; ?></button>
     </form>
 
@@ -20,7 +24,6 @@
         <tr><td><?php echo $text_result_status; ?></td><td><?php echo $tracking['status']; ?></td></tr>
         <tr><td><?php echo $text_result_sender_city; ?></td><td><?php echo $tracking['city_sender']; ?></td></tr>
         <tr><td><?php echo $text_result_recipient_city; ?></td><td><?php echo $tracking['city_recipient']; ?></td></tr>
-        <tr><td><?php echo $text_result_recipient; ?></td><td><?php echo $tracking['recipient']; ?></td></tr>
         <tr><td><?php echo $text_result_updated_at; ?></td><td><?php echo $tracking['updated_at']; ?></td></tr>
       </table>
     <?php } ?>

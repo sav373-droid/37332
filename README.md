@@ -1,26 +1,21 @@
-# Nova Poshta shipping module for OpenCart 2.3
+# Nova Poshta module for OpenCart 2.3 (independent)
 
-Модуль для **OpenCart 2.3.x**, який:
+Це **незалежний модуль тільки для OpenCart 2.3.x**, без прив’язки до CRM.
+Для роботи використовується **офіційний API Нової пошти**: `https://api.novaposhta.ua/v2.0/json/`.
 
-1. додає метод доставки **Nova Poshta** у checkout;
-2. дає змогу відслідковувати ТТН через CRM Open API (`/open-api`).
+## Що реалізовано
 
-## Що входить
+1. **Метод доставки Nova Poshta** у checkout.
+2. **Кабінет Нової пошти в адмінці**:
+   - налаштування API key, Geo Zone, вартості, статусу, сортування;
+   - API Console для виклику **будь-якого** методу API (`modelName`, `calledMethod`, `methodProperties`);
+   - Action Log, де фіксуються всі API-виклики (запит/відповідь/помилка).
+3. **Фронтенд-відстеження ТТН** через `TrackingDocument/getStatusDocuments`.
 
-### 1) Метод доставки (Shipping Extension)
-
-- Адмін-налаштування: API URL, API token, базова вартість доставки, Geo Zone, статус, сортування.
-- Вітрина: метод доставки `Nova Poshta` у блоці вибору доставки.
-
-### 2) Відслідковування ТТН (Front Module)
-
-- Форма для введення номера накладної (ТТН).
-- POST-запит до API: `POST {api_url}/nova-poshta/track`.
-- Вивід статусу, міста відправника/одержувача, одержувача, часу оновлення.
-
-## Файли
+## Файли Nova Poshta
 
 - `admin/controller/extension/shipping/codex_novaposhta.php`
+- `admin/model/extension/shipping/codex_novaposhta.php`
 - `admin/language/english/extension/shipping/codex_novaposhta.php`
 - `admin/view/template/extension/shipping/codex_novaposhta.tpl`
 - `catalog/model/extension/shipping/codex_novaposhta.php`
@@ -32,14 +27,13 @@
 ## Встановлення
 
 1. Скопіюйте файли у корінь OpenCart 2.3.
-2. Адмінка → **Extensions → Shipping** → встановіть **Nova Poshta (CRM API)**.
-3. Натисніть **Edit**, заповніть:
-   - API base URL: `https://crm.sitniks.com/open-api`
-   - API key/token (якщо потрібен)
-   - default cost та інші параметри
-4. Увімкніть метод доставки.
-5. Додайте модуль трекінгу на потрібну сторінку через **Extensions → Modules** (або вставте route вручну у ваш шаблон/контролер).
+2. Адмінка → **Extensions → Shipping** → встановіть **Nova Poshta Cabinet**.
+3. Увійдіть в налаштування і вкажіть **Nova Poshta API key**.
+4. За потреби налаштуйте Geo Zone, вартість, статус, сортування.
+5. Для перевірки/інтеграції додаткових сценаріїв відкрийте вкладку **API console** і викликайте потрібні методи API.
+6. Для перегляду історії дій відкрийте вкладку **Action log**.
 
-## Примітка по API
+## Примітка
 
-Оскільки схема API може змінюватись, контролер трекінгу робить м'який парсинг відповіді і підтримує ключі `data.status` або `data.current_status`.
+При встановленні створюється таблиця логів:
+`oc_codex_novaposhta_action` (з префіксом вашої БД).
